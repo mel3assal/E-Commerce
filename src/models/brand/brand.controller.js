@@ -2,34 +2,43 @@ import slugify from 'slugify';
 import { catchError } from '../../middlewares/catchError.js';
 import { AppError } from '../../utilis/AppError.js';
 import { Brand } from './../../../database/models/brand.model.js';
-const addBrand=catchError(async(req,res,next)=>{
-    req.body.slug=slugify(req.body.name)
-    const brand=await Brand.create(req.body)
+import fs from 'fs'
+import path from 'path';
+const addBrand = catchError(async (req, res, next) => {
+    req.body.logo = req.file.filename
+    req.body.slug = slugify(req.body.name)
+    const brand = await Brand.create(req.body)
     brand.save()
-    res.status(201).json({message:"Brand created successfully",brand})
+    res.status(201).json({ message: "Brand created successfully", brand })
 })
 
-const getAllBrands=catchError(async(req,res,next)=>{
-    const Brands=await Brand.find()
-    if(!Brands) return next(new AppError('no subcategories found',404))
-    res.status(200).json({message:"Brands are",Brands})
+const getAllBrands = catchError(async (req, res, next) => {
+    const Brands = await Brand.find()
+    if (!Brands) return next(new AppError('no subcategories found', 404))
+    res.status(200).json({ message: "Brands are", Brands })
 })
 
-const getBrand=catchError(async(req,res,next)=>{
-    const brand=await Brand.findById(req.params.id)
-    if(!brand) return next(new AppError('Brand not found',404))
-    res.status(200).json({message:"Brand is",brand})
+const getBrand = catchError(async (req, res, next) => {
+    const brand = await Brand.findById(req.params.id)
+    if (!brand) return next(new AppError('Brand not found', 404))
+    res.status(200).json({ message: "Brand is", brand })
 })
-const updateBrand=catchError(async(req,res,next)=>{
-    req.body.slug=slugify(req.body.name)
-    const brand=await Brand.findByIdAndUpdate(req.params.id,req.body,{new:true})
-    if(!brand) return next(new AppError('Brand not found ',404))
-    res.status(200).json({message:"Brand updated Successfully",brand})
+const updateBrand = catchError(async (req, res, next) => {
+    const brand = await Brand.findById(req.params.id)
+    if (!brand) return next(new AppError('Brand not found', 404))//there is problem adding the photo to upload file even if not found
+    if (req.body.name) req.body.slug = slugify(req.body.name)
+    if (req.file) {
+        req.body.logo = req.file.filename
+        const filePath = path.join('uploads', 'brands', `${brand.logo.split('/')[5]}`);
+        fs.unlinkSync(filePath)
+    }
+    await brand.updateOne(req.body)
+    res.status(200).json({ message: "Brand updated Successfully", brand })
 })
 
-const deleteBrand=catchError(async(req,res,next)=>{
-    const brand=await Brand.findByIdAndDelete({_id:req.params.id},{new:true})
-    if(!brand) return next(new AppError('Brand not found',404))
-    res.json({message:"Brand delted successfully",brand})
+const deleteBrand = catchError(async (req, res, next) => {
+    const brand = await Brand.findByIdAndDelete({ _id: req.params.id }, { new: true })
+    if (!brand) return next(new AppError('Brand not found', 404))
+    res.json({ message: "Brand delted successfully", brand })
 })
-export {addBrand,getAllBrands,getBrand,updateBrand,deleteBrand}
+export { addBrand, getAllBrands, getBrand, updateBrand, deleteBrand }

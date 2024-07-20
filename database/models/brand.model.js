@@ -19,7 +19,9 @@ const brandSchema = new Schema({
         ref:'User',
     },
     logo:String,
-    image: String
 }, { timestamps: true, versionKey: false })
+brandSchema.post('init',(doc)=>{
+    doc.logo="http://localhost:3000/uploads/brands/"+doc.logo
+})
 
 export const Brand = model('Brand', brandSchema)

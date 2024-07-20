@@ -25,5 +25,8 @@ const subCategorySchema = new Schema({
         ref:'User',
     }
 }, { timestamps: true, versionKey: false })
+subCategorySchema.post('init',(doc)=>{
+    doc.image="http://localhost:3000/uploads/subCategories/"+doc.image
+})
 
 export const SubCategory = model('SubCategory', subCategorySchema)

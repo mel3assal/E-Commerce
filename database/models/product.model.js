@@ -17,7 +17,7 @@ const productSchema = new Schema({
     description: {
         type: String,
         required: [true, 'description is required'],
-        minLength: 30,
+        minLength: 15,
         maxLength: 3000
     },
     imageCover: String,
@@ -43,5 +43,8 @@ const productSchema = new Schema({
     }
 
 }, { timestamps: true, versionKey: false })
-
+productSchema.post('init',(doc)=>{
+    doc.imageCover="http://localhost:3000/uploads/products/"+doc.imageCover
+    doc.images=doc.images.map((ele)=>"http://localhost:3000/uploads/products/"+ele)
+})
 export const Product = model('Product', productSchema)

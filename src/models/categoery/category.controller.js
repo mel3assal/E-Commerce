@@ -2,7 +2,10 @@ import slugify from 'slugify';
 import { Category } from '../../../database/models/category.model.js';
 import { catchError } from './../../middlewares/catchError.js';
 import { AppError } from './../../utilis/AppError.js';
+import fs from 'fs'
+import path from 'path';
 const addCategory=catchError(async(req,res,next)=>{
+    req.body.image=req.file.filename
     req.body.slug=slugify(req.body.name)
     const category=await Category.create(req.body)
     category.save()
@@ -21,14 +24,19 @@ const getCategory=catchError(async(req,res,next)=>{
     res.status(200).json({message:"category is",category})
 })
 const updateCategory=catchError(async(req,res,next)=>{
-    req.body.slug=slugify(req.body.name)
-    const category=await Category.findByIdAndUpdate(req.params.id,req.body,{new:true})
-    if(!category) return next(new AppError('category not found ',404))
-    res.status(200).json({message:"category is",category})
+    const category = await Category.findById(req.params.id)
+    if (!category) return next(new AppError('category not found', 404))//there is problem adding the photo to upload file even if not found
+    if (req.body.name) req.body.slug = slugify(req.body.name)
+    if (req.file) {
+        req.body.image = req.file.filename
+        const filePath = path.join('uploads', 'categories', `${category.image.split('/')[5]}`);
+        fs.unlinkSync(filePath)
+    }
+    await category.updateOne(req.body)
+    res.status(200).json({ message: "Brand updated Successfully", category })
 })
 
 const deleteCategory=catchError(async(req,res,next)=>{
-    console.log(req.params.id);
     const category=await Category.findByIdAndDelete({_id:req.params.id},{new:true})
     console.log(category);
     if(!category) return next(new AppError('category not found',404))
