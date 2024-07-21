@@ -5,7 +5,12 @@ const addBrandVal=joi.object({
     logo:joi.object({
         fieldname:joi.string().required(),
         originalname:joi.string().required(),
-        mimetype:joi.number().required()
+        encoding:joi.string().required(),
+        mimetype:joi.number().required().valid('image/jpeg','image/png','image/jpg'),
+        size:joi.number().required(),
+        destination:joi.string().required(),
+        filename:joi.string().required(),
+        path:joi.string().required()
     }).required()
 })
 const getAllBrandsVal=joi.object({
@@ -20,8 +25,13 @@ const updateBrandVal=joi.object({
     logo:joi.object({
         fieldname:joi.string().required(),
         originalname:joi.string().required(),
-        mimetype:joi.number().required()
-    }),
+        encoding:joi.string().required(),
+        mimetype:joi.number().required().valid('image/jpeg','image/png','image/jpg'),
+        size:joi.number().required(),
+        destination:joi.string().required(),
+        filename:joi.string().required(),
+        path:joi.string().required()
+    }).required(),
     id:joi.string().hex().length(24)
 })
 const deleteBrandVal=joi.object({
