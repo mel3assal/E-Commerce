@@ -1,8 +1,8 @@
 import joi from 'joi'
 const addBrandVal=joi.object({
     name:joi.string().min(2).max(20).required(),
-    createdBy:joi.string().hex().length(24).required(),
-    logo:joi.object({
+    createdBy:joi.string().hex().length(24),
+    file:joi.object({
         fieldname:joi.string().required(),
         originalname:joi.string().required(),
         encoding:joi.string().required(),
@@ -13,8 +13,13 @@ const addBrandVal=joi.object({
         path:joi.string().required()
     }).required()
 })
-const getAllBrandsVal=joi.object({
-})
+// const getAllBrandsVal=joi.object({
+//     page:joi.string(),
+//     search:joi.string(),
+//     sort:joi.string(),
+//     fields:joi.string(),
+//     filter:joi.string()
+// })
 
 const getBrandVal=joi.object({
     id:joi.string().hex().length(24).required()
@@ -22,7 +27,7 @@ const getBrandVal=joi.object({
 const updateBrandVal=joi.object({
     name:joi.string().min(2).max(20),
     createdBy:joi.string().hex().length(24),
-    logo:joi.object({
+    file:joi.object({
         fieldname:joi.string().required(),
         originalname:joi.string().required(),
         encoding:joi.string().required(),
@@ -37,4 +42,4 @@ const updateBrandVal=joi.object({
 const deleteBrandVal=joi.object({
     id:joi.string().hex().length(24).required()
 })
-export {addBrandVal,getAllBrandsVal,getBrandVal,updateBrandVal,deleteBrandVal}
+export {addBrandVal,getBrandVal,updateBrandVal,deleteBrandVal}

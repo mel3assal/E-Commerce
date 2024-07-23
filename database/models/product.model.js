@@ -2,7 +2,7 @@ import { model, Schema, Types } from "mongoose"
 const productSchema = new Schema({
     title: {
         type: String,
-        unique: [true, 'name must be string'],
+        unique: [true, 'name must be unique'],
         trim: true,
         required: [true, 'name is required'],
         minLength: [3, 'categoery name is too short']
@@ -16,7 +16,6 @@ const productSchema = new Schema({
     },
     description: {
         type: String,
-        required: [true, 'description is required'],
         minLength: 15,
         maxLength: 3000
     },
@@ -44,7 +43,7 @@ const productSchema = new Schema({
 
 }, { timestamps: true, versionKey: false })
 productSchema.post('init',(doc)=>{
-    doc.imageCover="http://localhost:3000/uploads/products/"+doc.imageCover
-    doc.images=doc.images.map((ele)=>"http://localhost:3000/uploads/products/"+ele)
+   if(doc.imageCover) doc.imageCover="http://localhost:3000/uploads/products/"+doc.imageCover
+    if(doc.images)doc.images=doc.images.map((ele)=>"http://localhost:3000/uploads/products/"+ele)
 })
 export const Product = model('Product', productSchema)

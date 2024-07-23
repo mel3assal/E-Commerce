@@ -4,6 +4,7 @@ import { AppError } from '../../utilis/AppError.js';
 import { Product } from './../../../database/models/product.model.js';
 import fs from 'fs'
 import path from 'path';
+import { APIFeatures } from './../../utilis/apiFeatures.js';
 const addProduct = catchError(async (req, res, next) => {
     req.body.imageCover = req.files.imageCover[0].filename
     req.body.images = req.files.images.map(ele => ele.filename)
@@ -14,9 +15,10 @@ const addProduct = catchError(async (req, res, next) => {
 })
 
 const getAllProducts = catchError(async (req, res, next) => {
-    const Products = await Product.find()
-    if (!Products) return next(new AppError('no subcategories found', 404))
-    res.status(200).json({ message: "Products are", Products })
+    let apiFeatures=new APIFeatures(Product.find(),req.query).pagination().filter().sort().fields().search()
+    let products=await apiFeatures.mongooseQuery
+    if (!products) return next(new AppError('no subcategories found', 404))
+    res.status(200).json({ message: "Products are", products })
 })
 
 const getProduct = catchError(async (req, res, next) => {

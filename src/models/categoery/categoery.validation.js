@@ -1,8 +1,8 @@
 import joi from 'joi'
 const addCategoryVal=joi.object({
-    name:joi.string().min(2).max(20),
+    name:joi.string().min(3).max(20).required(),
     createdBy:joi.string().hex().length(24),
-    image:joi.object({
+    file:joi.object({
         fieldname:joi.string().required(),
         originalname:joi.string().required(),
         encoding:joi.string().required(),
@@ -13,8 +13,6 @@ const addCategoryVal=joi.object({
         path:joi.string().required()
     }).required()
 })
-const getAllCateoriesVal=joi.object({
-})
 
 const getCategoryVal=joi.object({
     id:joi.string().hex().length(24).required()
@@ -22,7 +20,7 @@ const getCategoryVal=joi.object({
 const updateCategoryVal=joi.object({
     name:joi.string().min(2).max(20),
     createdBy:joi.string().hex().length(24),
-    image:joi.object({
+    file:joi.object({
         fieldname:joi.string().required(),
         originalname:joi.string().required(),
         encoding:joi.string().required(),
@@ -32,9 +30,9 @@ const updateCategoryVal=joi.object({
         filename:joi.string().required(),
         path:joi.string().required()
     }),
-    id:joi.string().hex().length(24)
+    id:joi.string().hex().length(24).required()
 })
 const deleteCategoryval=joi.object({
     id:joi.string().hex().length(24).required()
 })
-export {addCategoryVal,getAllCateoriesVal,getCategoryVal,updateCategoryVal,deleteCategoryval}
+export {addCategoryVal,getCategoryVal,updateCategoryVal,deleteCategoryval}

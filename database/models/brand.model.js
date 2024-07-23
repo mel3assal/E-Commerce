@@ -3,7 +3,7 @@ import { model, Schema, Types } from "mongoose"
 const brandSchema = new Schema({
     name: {
         type: String,
-        unique: [true, 'name must be string'],
+        unique: [true, 'name must be unique'],
         trim: true,
         required: [true, 'name is required'],
         minLength: [2, 'categoery name is too short']
@@ -21,7 +21,7 @@ const brandSchema = new Schema({
     logo:String,
 }, { timestamps: true, versionKey: false })
 brandSchema.post('init',(doc)=>{
-    doc.logo="http://localhost:3000/uploads/brands/"+doc.logo
+  if(doc.logo) doc.logo="http://localhost:3000/uploads/brands/"+doc.logo
 })
 
 export const Brand = model('Brand', brandSchema)

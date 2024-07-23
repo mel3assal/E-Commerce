@@ -4,6 +4,7 @@ import { AppError } from '../../utilis/AppError.js';
 import { Brand } from './../../../database/models/brand.model.js';
 import fs from 'fs'
 import path from 'path';
+import { APIFeatures } from './../../utilis/apiFeatures.js';
 const addBrand = catchError(async (req, res, next) => {
     req.body.logo = req.file.filename
     req.body.slug = slugify(req.body.name)
@@ -13,9 +14,10 @@ const addBrand = catchError(async (req, res, next) => {
 })
 
 const getAllBrands = catchError(async (req, res, next) => {
-    const Brands = await Brand.find()
-    if (!Brands) return next(new AppError('no subcategories found', 404))
-    res.status(200).json({ message: "Brands are", Brands })
+    let apiFeatures=new APIFeatures(Brand.find(),req.query).pagination().search().fields().filter().sort()
+    let brands=await apiFeatures.mongooseQuery
+    if (!brands) return next(new AppError('no subcategories found', 404))
+    res.status(200).json({ message: "Brands are", brands })
 })
 
 const getBrand = catchError(async (req, res, next) => {

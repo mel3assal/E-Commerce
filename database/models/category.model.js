@@ -13,7 +13,6 @@ const categorySchema = new Schema({
         lowerCase: true,
         required: true,
         unique:true
-
     },
     createdBy:{
         type:Types.ObjectId,
@@ -22,6 +21,6 @@ const categorySchema = new Schema({
     image: String
 }, { timestamps: true, versionKey: false })
 categorySchema.post('init',function(doc){
-    doc.image="http://localhost:3000/uploads/categories/"+doc.image
+    if(doc.image) doc.image="http://localhost:3000/uploads/categories/"+doc.image
 })
 export const Category=model('Category',categorySchema)

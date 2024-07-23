@@ -4,6 +4,7 @@ import { catchError } from './../../middlewares/catchError.js';
 import { AppError } from './../../utilis/AppError.js';
 import fs from 'fs'
 import path from 'path';
+import { APIFeatures } from './../../utilis/apiFeatures.js';
 const addCategory=catchError(async(req,res,next)=>{
     req.body.image=req.file.filename
     req.body.slug=slugify(req.body.name)
@@ -13,7 +14,8 @@ const addCategory=catchError(async(req,res,next)=>{
 })
 
 const getAllCategory=catchError(async(req,res,next)=>{
-    const categories=await Category.find()
+    let apiFeatures=new APIFeatures(Category.find(),req.query).pagination().filter().fields().search().sort()
+    let categories=await apiFeatures.mongooseQuery
     if(!categories) return next(new AppError('no categoeries found',404))
     res.status(200).json({message:"categories are",categories})
 })
@@ -33,12 +35,11 @@ const updateCategory=catchError(async(req,res,next)=>{
         fs.unlinkSync(filePath)
     }
     await category.updateOne(req.body)
-    res.status(200).json({ message: "Brand updated Successfully", category })
+    res.status(200).json({ message: "Category updated Successfully", category })
 })
 
 const deleteCategory=catchError(async(req,res,next)=>{
     const category=await Category.findByIdAndDelete({_id:req.params.id},{new:true})
-    console.log(category);
     if(!category) return next(new AppError('category not found',404))
     res.json({message:"category is",category})
 })

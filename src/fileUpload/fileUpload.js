@@ -11,7 +11,7 @@ const fileUpload=(folderName)=>{
         }
     })
     function fileFilter(req, file, cb) {
-        if (file.mimetype.startsWith('image')) {  
+        if (file.mimetype==='image/jpeg'||'image/png'||'image/jpg') {  
             cb(null, true)
         } else {
             cb(new AppError('images only ', 401), false)

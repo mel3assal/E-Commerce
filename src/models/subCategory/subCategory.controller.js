@@ -4,6 +4,7 @@ import { AppError } from '../../utilis/AppError.js';
 import { SubCategory } from '../../../database/models/subCategory.mdel.js';
 import fs from 'fs'
 import path from 'path';
+import { APIFeatures } from '../../utilis/apiFeatures.js';
 const addsubCategory=catchError(async(req,res,next)=>{
     req.body.image=req.file.filename
     req.body.slug=slugify(req.body.name)
@@ -13,13 +14,16 @@ const addsubCategory=catchError(async(req,res,next)=>{
 })
 
 const getAllsubCategory=catchError(async(req,res,next)=>{
-    const subcategories=await SubCategory.find().populate('category')
+    let filterObj={}
+    if(req.params.category) filterObj.category=req.params.category
+    let apiFeatures=new APIFeatures(SubCategory.find(filterObj),req.query).filter().fields().sort().search().pagination()
+    const subcategories=await apiFeatures.mongooseQuery.populate('category')
     if(!subcategories) return next(new AppError('no subcategories found',404))
     res.status(200).json({message:"subcategories are",subcategories})
 })
 
 const getsubCategory=catchError(async(req,res,next)=>{
-    const subcategory=await SubCategory.findById(req.params.id).populate('category')
+    const subcategory=await SubCategory.findById(req.params.id).populate('category') 
     if(!subcategory) return next(new AppError('subcategory not found',404))
     res.status(200).json({message:"subcategory is",subcategory})
 })

@@ -1,16 +1,14 @@
 import { AppError } from './../utilis/AppError.js';
 export const validate = (schema) => {
     return async (req, res, next) => {
-        let files = () => {
-            if (req.file) {
-                let { fieldname } = req.file
-                return { fieldname: req.file }
-            }
-        if (req.files) {
-            return { images: req.files }
-        }
+    let inputData={ ...req.body, ...req.params,...req.query }
+    if(req.file){
+        inputData.file={...req.file}
     }
-    let { error } = schema.validate({ ...files(), ...req.body, ...req.params }, { abortEarly: false })
+    if(req.files){
+            inputData.files={...req.files}
+    }
+    let { error } = schema.validate(inputData, { abortEarly: false })
     if (!error) {
         next()
     } else {

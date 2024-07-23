@@ -1,11 +1,13 @@
 import { Router } from "express";
 import  * as productController from './product.controller.js'
 import { uploadMixOfFiles } from "../../fileUpload/fileUpload.js";
-const router=Router()
-router.post('/',uploadMixOfFiles([{name:'imageCover',maxCount:1},{name:'images',maxCount:8}],'products'),productController.addProduct).
+import { addProductVal, deleteProductval, getProductVal, updateProductVal } from "./product.validation.js";
+import { validate } from './../../middlewares/validate.js';
+const productRouter=Router()
+productRouter.post('/',uploadMixOfFiles([{name:'imageCover',maxCount:1},{name:'images',maxCount:8}],'products'),validate(addProductVal),productController.addProduct).
 get('/',productController.getAllProducts).
-get('/:id',productController.getProduct).
-put('/:id',uploadMixOfFiles([{name:'imageCover',maxCount:1},{name:'images',maxCount:8}],'products'),productController.updateProduct).
-delete('/:id',productController.deleteProduct)
+get('/:id',validate(getProductVal),productController.getProduct).
+put('/:id',uploadMixOfFiles([{name:'imageCover',maxCount:1},{name:'images',maxCount:8}],'products'),validate(updateProductVal),productController.updateProduct).
+delete('/:id',validate(deleteProductval),productController.deleteProduct)
 
-export default  router
+export default  productRouter
