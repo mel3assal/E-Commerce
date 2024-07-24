@@ -39,8 +39,11 @@ const updateBrand = catchError(async (req, res, next) => {
 })
 
 const deleteBrand = catchError(async (req, res, next) => {
-    const brand = await Brand.findByIdAndDelete({ _id: req.params.id }, { new: true })
+    const brand = await Brand.findById({ _id: req.params.id })
     if (!brand) return next(new AppError('Brand not found', 404))
+    const filePath = path.join('uploads', 'brands', `${brand.logo.split('/')[5]}`);
+    fs.unlinkSync(filePath)
+    await brand.deleteOne()
     res.json({ message: "Brand delted successfully", brand })
 })
 export { addBrand, getAllBrands, getBrand, updateBrand, deleteBrand }

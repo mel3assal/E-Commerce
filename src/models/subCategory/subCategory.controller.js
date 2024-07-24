@@ -41,8 +41,11 @@ const updatesubCategory=catchError(async(req,res,next)=>{
 })
 
 const deletesubCategory=catchError(async(req,res,next)=>{
-    const subcategory=await SubCategory.findByIdAndDelete({_id:req.params.id},{new:true})
+    const subcategory=await SubCategory.findById({_id:req.params.id})
     if(!subcategory) return next(new AppError('subcategory not found',404))
-    res.json({message:"subcategory is",subcategory})
+    const filePath = path.join('uploads', 'subCategories', `${subcategory.image.split('/')[5]}`);
+    fs.unlinkSync(filePath)
+    await subcategory.deleteOne()
+    res.json({message:"subcategory deleted successfully",subcategory})
 })
 export {addsubCategory,getAllsubCategory,getsubCategory,updatesubCategory,deletesubCategory}

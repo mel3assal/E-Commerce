@@ -15,6 +15,5 @@ export const validate = (schema) => {
         let errMsgs = error.details?.map(err => err.message)
         next(new AppError(errMsgs, 401))
     }
-
 }
 }

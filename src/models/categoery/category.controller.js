@@ -39,8 +39,11 @@ const updateCategory=catchError(async(req,res,next)=>{
 })
 
 const deleteCategory=catchError(async(req,res,next)=>{
-    const category=await Category.findByIdAndDelete({_id:req.params.id},{new:true})
+    const category=await Category.findById({_id:req.params.id})
     if(!category) return next(new AppError('category not found',404))
-    res.json({message:"category is",category})
+    const filePath = path.join('uploads', 'categories', `${category.image.split('/')[5]}`);
+    fs.unlinkSync(filePath)
+    await category.deleteOne()
+    res.json({message:"category deleted successfully",category})
 })
 export {addCategory,getAllCategory,getCategory,updateCategory,deleteCategory}

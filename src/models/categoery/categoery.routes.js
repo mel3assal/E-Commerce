@@ -11,5 +11,4 @@ get('/',categoeryController.getAllCategory).
 get('/:id',validate(getCategoryVal),categoeryController.getCategory).
 put('/:id',uploadSingleFile('image','categories'),validate(updateCategoryVal),categoeryController.updateCategory).
 delete('/:id',validate(deleteCategoryval),categoeryController.deleteCategory)
-
 export  default categoryRouter
