@@ -15,6 +15,7 @@ const userSchma = new Schema({
         enum: ['admin', 'user'],
         default: 'user'
     },
+    passwordChangedAt:Date    ////used for the change password token check
 
 })
 userSchma.pre('save',function(){
