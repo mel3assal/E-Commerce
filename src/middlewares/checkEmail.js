@@ -1,9 +1,8 @@
-import bcrypt from "bcryptjs"
-import { User } from "../../databases/Models/user.model.js"
+import { AppError } from "../utilis/AppError.js"
+import { User } from './../../database/models/user.model.js';
 const checkEmail = async (req, res, next) => {
     const isFound = await User.findOne({ email: req.body.email })
-    if (isFound) return res.status(409).json({ message: "user already exists" })
-    req.body.password = bcrypt.hashSync(req.body.password, 8)
+    if (isFound) return next(new AppError('user already exist',408))
     next()
 }
 export default checkEmail
