@@ -6,14 +6,14 @@ import jwt from 'jsonwebtoken'
 const signUp = catchError(async (req, res, next) => {
     let user = await User.create(req.body)
     await user.save()
-    let token = jwt.sign({ userId: user._id, role: user.role }, 'MyNameIsMohamed')
+    let token = jwt.sign({ userId: user._id, role: user.role }, process.env.secret_key)
     res.json({ message: "success", token })
 })
 
 const signIn = catchError(async (req, res, next) => {
-    let user = await User.findOne({ email: req.body.email })
+    let user = await User.findOne({ email: req.body.email })    
     if (user && bcrypt.compareSync(user.password, req.body.password)) {
-        let token = jwt.sign({ userId: user._id, role: user.role }, 'MyNameIsMohamed')
+        let token = jwt.sign({ userId: user._id, role: user.role }, process.env.secret_key)
         return res.json({ message: "success", token })
     }
     next(new AppError('invalid email or password ', 401))
@@ -23,7 +23,7 @@ const changeUserPassword = catchError(async (req, res, next) => {
     let user = await User.findOne({ email: req.body.email })
     if (user && bcrypt.compareSync(req.body.oldPassword, user.password)) {
         await user.updateOne({ password: bcrypt.hashSync(req.body.newPassword, 8), passwordChangedAt: Date.now() })
-        let token = jwt.sign({ userId: user._id, role: user.role }, 'MyNameIsMohamed')
+        let token = jwt.sign({ userId: user._id, role: user.role }, process.env.secret_key)
         return res.json({ message: 'success', token })
     }
     next(new AppError('invalid email or password', 401))
@@ -33,7 +33,7 @@ const protectedRoutes = catchError(async (req, res, next) => {
     let { token } = req.headers
     let userPayLoad = null
     if (!token) return next(new AppError('token not provided'))
-    jwt.verify(token, 'MyNameIsMohamed', (err, payload) => {
+    jwt.verify(token, process.env.secret_key, (err, payload) => {
         if (err) return next(new AppError(err, 401))
         userPayLoad = payload
     })
@@ -46,4 +46,13 @@ const protectedRoutes = catchError(async (req, res, next) => {
     req.user = user
     next()
 })
-export { signUp, signIn, changeUserPassword, protectedRoutes }
+
+const allowedTo=(...roles)=>{
+    return catchError(async(req,res,next)=>{
+        if(roles.includes(req.user.role)){
+            return next()
+        }
+        return next(new AppError('you are not authorized',401))
+    })
+}
+export { signUp, signIn, changeUserPassword, protectedRoutes,allowedTo }

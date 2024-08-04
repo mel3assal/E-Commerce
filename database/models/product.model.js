@@ -11,7 +11,7 @@ const productSchema = new Schema({
         type: String,
         lowerCase: true,
         required: true,
-        unique:true
+        unique: true
 
     },
     description: {
@@ -34,16 +34,24 @@ const productSchema = new Schema({
     Category: { type: Types.ObjectId, ref: 'Category' },
     brand: { type: Types.ObjectId, ref: 'Brand' },
     SubCategory: { type: Types.ObjectId, ref: 'SubCategory' },
-    rateAvg:{type:Number,min:0,max:5},
-    rateCount:Number,
-    createdBy:{
-        type:Types.ObjectId,
-        ref:'User',
+    rateAvg: { type: Number, min: 0, max: 5 },
+    rateCount: Number,
+    createdBy: {
+        type: Types.ObjectId,
+        ref: 'User',
     }
 
-}, { timestamps: true, versionKey: false })
-productSchema.post('init',(doc)=>{
-   if(doc.imageCover) doc.imageCover="http://localhost:3000/uploads/products/"+doc.imageCover
-    if(doc.images)doc.images=doc.images.map((ele)=>"http://localhost:3000/uploads/products/"+ele)
+}, { timestamps: true, versionKey: false ,toJSON:{virtuals:true}})
+productSchema.virtual('Reviews',{
+    ref:'Review',
+    localField:'_id',
+    foreignField:'product'
+})
+productSchema.pre("findOne",function(){
+    this.populate('Reviews')
+})
+productSchema.post('init', (doc) => {
+    if (doc.imageCover) doc.imageCover = "http://localhost:3000/uploads/products/" + doc.imageCover
+    if (doc.images) doc.images = doc.images.map((ele) => "http://localhost:3000/uploads/products/" + ele)
 })
 export const Product = model('Product', productSchema)

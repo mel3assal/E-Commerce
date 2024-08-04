@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import bcrypt from 'bcryptjs';
 
 const userSchma = new Schema({
@@ -15,8 +15,9 @@ const userSchma = new Schema({
         enum: ['admin', 'user'],
         default: 'user'
     },
-    passwordChangedAt:Date    ////used for the change password token check
-
+    passwordChangedAt:Date,    ////used for the change password token check
+    wishList:[{type:Types.ObjectId,ref:"Product"}],
+    addresses:[{city:String,phone:String,stree:String}]
 })
 userSchma.pre('save',function(){
     this.password=bcrypt.hashSync(this.password,8)
