@@ -1,4 +1,5 @@
 import { Cart } from "../../../database/models/cart.model.js";
+import { Coupon } from "../../../database/models/coupon.model.js";
 import { Product } from "../../../database/models/product.model.js";
 import { catchError } from "../../middlewares/catchError.js";
 import { AppError } from "../../utilis/AppError.js";
@@ -8,6 +9,10 @@ function calcTotalPrice(isExist) {
     (prev, item) => (prev += item.quantity * item.price),
     0
   );
+  if(isExist.discount){
+    isExist.totalPriceAfterDiscount =
+  isExist.totalPrice - (isExist.totalPrice * isExist.discount) / 100; //if the user has coupon the discount will be applied
+  }
 }
 const addToCart = catchError(async (req, res, next) => {
   const isExist = await Cart.findOne({ user: req.user._id });
@@ -51,11 +56,45 @@ const updateCart = catchError(async (req, res, next) => {
   res.json({ message: "quantity updated successfully", cart });
 });
 
-const removeItemFromCart=catchError(async(req,res,next)=>{
-    let cart=await Cart.findOneAndUpdate({user:req.user._id},{$pull:{cartItems:{_id:req.params.id}}},{new:true})
-    cart||next(new AppError(`cart not found`,404))
-    calcTotalPrice(cart);
-    await cart.save(); 
-    res.json({message:"success",cart}) 
-})
-export { addToCart, updateCart ,removeItemFromCart};
+const removeItemFromCart = catchError(async (req, res, next) => {
+  let cart = await Cart.findOneAndUpdate(
+    { user: req.user._id },
+    { $pull: { cartItems: { _id: req.params.id } } },
+    { new: true }
+  );
+  !cart || next(new AppError(`cart not found`, 404));
+  calcTotalPrice(cart);
+  await cart.save();
+  res.json({ message: "success", cart });
+});
+
+const getLoggedUsercart = catchError(async (req, res, next) => {
+  let cart = await Cart.findOne({ user: req.user._id }).populate('cartItems.product');
+  if (!cart) return next(new AppError(`cart not found`, 404));
+  res.json({ message: "success", cart });
+});
+
+const clearCart = catchError(async (req, res, next) => {
+  let cart = await Cart.findOneAndDelete({ user: req.user._id });
+  if (!cart) return next(new AppError(`cart not found`, 404));
+  res.json({ message: "success", cart });
+});
+
+const applyCoupon = catchError(async (req, res, next) => {
+  let cart = await Cart.findOne({ user: req.user._id });
+  let coupon = await Coupon.findOne({
+    code: req.body.code,
+    expires: { $gte: Date.now() },
+  });
+  if (!coupon) return next(new AppError(`invalid coupon`, 404));
+    cart.discount=coupon.discount
+  await cart.save();
+  res.json({ message: "success", cart });
+});
+export {
+  addToCart,
+  updateCart,
+  removeItemFromCart,
+  getLoggedUsercart,
+  clearCart,applyCoupon
+};

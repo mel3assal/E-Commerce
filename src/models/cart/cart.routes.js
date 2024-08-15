@@ -6,6 +6,19 @@ const cartRouter = Router();
 cartRouter
   .post("/", protectedRoutes, allowedTo("user"), cartController.addToCart)
   .put("/:id", protectedRoutes, allowedTo("user"), cartController.updateCart)
-  .delete("/:id", protectedRoutes, allowedTo("user"), cartController.removeItemFromCart);
+  .delete(
+    "/",
+    protectedRoutes,
+    allowedTo("user"),
+    cartController.removeItemFromCart
+  )
+  .get(
+    "/:id",
+    protectedRoutes,
+    allowedTo("user"),
+    cartController.getLoggedUsercart
+  )
+  .delete("/", protectedRoutes, allowedTo("user"), cartController.clearCart)
+  .post("/apply-coupon", protectedRoutes, allowedTo("user"), cartController.applyCoupon);
 
 export default cartRouter;

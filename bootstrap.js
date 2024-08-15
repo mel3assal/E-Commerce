@@ -11,6 +11,7 @@ import wishListRouter from './src/models/wishlist/wishList.routes.js'
 import addressesRouter from './src/models/address/address.routes.js'
 import couponRouter from './src/models/coupon/coupon.routes.js';
 import cartRouter from './src/models/cart/cart.routes.js'
+import orderRouter from './src/models/order/order.routes.js'
 const bootstrap=(express,app)=>{
     app.use(express.json())
     app.use('/categories',categoryRouter)
@@ -24,6 +25,7 @@ const bootstrap=(express,app)=>{
     app.use('/addresses',addressesRouter)
     app.use('/coupons',couponRouter)
     app.use('/carts',cartRouter)
+    app.use('/orders',orderRouter)
     app.use('*',(req,res,next)=>{
         next(new AppError(`routes not found at  ${req.originalUrl}`,404))
     })
