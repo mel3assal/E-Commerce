@@ -12,14 +12,15 @@ orderRouter
   .get(
     "/user",
     protectedRoutes,
-    allowedTo("user",'admin'),
+    allowedTo("user", "admin"),
     orderController.getUserOrders
   )
-  .get(
-    "/",
+  .get("/", protectedRoutes, allowedTo("admin"), orderController.getAllOrders)
+  .post(
+    "/checkout/:id",
     protectedRoutes,
-    allowedTo("admin"),
-    orderController.getAllOrders
+    allowedTo("user"),
+    orderController.checkOutSession
   );
 
 export default orderRouter;

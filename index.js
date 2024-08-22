@@ -1,12 +1,14 @@
 process.on('uncaughtException',(err)=>{
     console.log("error",err)
 })
+import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import { dbConnection } from './database/dbConnection.js'
 import bootstrap from './bootstrap.js';
 const app = express()
-const port = 3000
+const port = process.env.port||3000
+app.use(cors())
 app.use('/uploads',express.static('uploads'))
 bootstrap(express,app)
 app.get('/', (req, res) => res.send('Hello World!'))
