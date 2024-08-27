@@ -9,6 +9,6 @@ productRouter.post('/',protectedRoutes,allowedTo('admin','user'),uploadMixOfFile
 get('/',productController.getAllProducts).
 get('/:id',validate(getProductVal),productController.getProduct).
 put('/:id',protectedRoutes,allowedTo('admin','user'),uploadMixOfFiles([{name:'imageCover',maxCount:1},{name:'images',maxCount:8}],'products'),validate(updateProductVal),productController.updateProduct).
-delete('/:id',validate(deleteProductval),productController.deleteProduct)
+delete('/:id',protectedRoutes,allowedTo('admin','user'),validate(deleteProductval),productController.deleteProduct)
 
 export default  productRouter

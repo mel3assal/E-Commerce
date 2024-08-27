@@ -1,17 +1,19 @@
 import joi from 'joi'
 const addCartVal=joi.object({
-    code:joi.string().required(),
-    discount:joi.number().required(),
-    expires:joi.date().required()
+    product:joi.string().hex().length(24).required(),
+    quantity:joi.number(),
 })
 const getCartVal=joi.object({
-    id:joi.string().hex().length(24).required()
+    id:joi.string().hex().length(24).required(),
 })
 const updateCartVal=joi.object({
-    name:joi.string().min(2).max(20),
-    createdBy:joi.string().hex().length(24)
-})
-const deleteCartVal=joi.object({
+    quantity:joi.number(),
     id:joi.string().hex().length(24).required()
 })
-export {addCartVal,getCartVal,updateCartVal,deleteCartVal}
+const removeCartItemVal=joi.object({
+    id:joi.string().hex().length(24).required()
+})
+const applyCouponVal=joi.object({
+    code:joi.string().required()
+})
+export {addCartVal,getCartVal,updateCartVal,removeCartItemVal,applyCouponVal}

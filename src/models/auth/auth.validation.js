@@ -17,6 +17,6 @@ const signInVal=joi.object({
 const changePasswordVal=joi.object({
     oldPassword:joi.string().pattern(/^[A-Z][a-zA-Z0-9]{8,40}$/).required(),
     newPassword:joi.string().pattern(/^[A-Z][a-zA-Z0-9]{8,40}$/).required(),
-    rePasword:joi.valid(joi.ref('newPassword')).required()
+    rePassword:joi.valid(joi.ref('newPassword')).required()
 })
 export {signUpVal,signInVal,changePasswordVal}

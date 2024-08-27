@@ -6,7 +6,6 @@ const addUser = catchError(async (req, res, next) => {
     const user = await User.create(req.body)
     user.save()
     res.status(201).json({ message: "User created successfully", user })
-
 })
 
 const getAllUsers = catchError(async (req, res, next) => {
@@ -30,6 +29,6 @@ const updateUser = catchError(async (req, res, next) => {
 const deleteUser = catchError(async (req, res, next) => {
     const user = await User.findByIdAndDelete(req.params.id)
     if (!user) return next(new AppError('user not found ', user))
-    res.json({ message: 'user not found ', user })
+    res.json({ message: 'user deleted Successfully ', user })
 })
 export { addUser, getAllUsers, getUser, updateUser, deleteUser }

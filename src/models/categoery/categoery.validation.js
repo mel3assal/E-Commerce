@@ -1,7 +1,7 @@
 import joi from 'joi'
 const addCategoryVal=joi.object({
     name:joi.string().min(3).max(20).required(),
-    createdBy:joi.string().hex().length(24),
+    createdBy:joi.string().hex().length(24).required(),
     file:joi.object({
         fieldname:joi.string().required(),
         originalname:joi.string().required(),

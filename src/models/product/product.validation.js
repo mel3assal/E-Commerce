@@ -1,8 +1,8 @@
 import joi from 'joi'
 const addProductVal = joi.object({
     title: joi.string().min(2).max(20).required(),
-    description: joi.string().min(2).max(20),
-    createdBy: joi.string().hex().length(24),
+    description: joi.string().min(2).max(40).required(),
+    createdBy: joi.string().hex().length(24).required(),
     category: joi.string().hex().length(24).required(),
     brand: joi.string().hex().length(24).required(),
     subCategory: joi.string().hex().length(24).required(),
@@ -39,7 +39,7 @@ const getProductVal = joi.object({
 })
 const updateProductVal = joi.object({
     title: joi.string().min(2).max(20),
-    description: joi.string().min(2).max(20),
+    description: joi.string().min(2).max(40),
     createdBy: joi.string().hex().length(24),
     category: joi.string().hex().length(24),
     brand: joi.string().hex().length(24),

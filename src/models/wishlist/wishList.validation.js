@@ -4,7 +4,7 @@ const addWishListVal=joi.object({
 })
 
 const removeFromWishListVal=joi.object({
-    product:joi.string().hex().length(24).required()
+    id:joi.string().hex().length(24).required()
 })
 
 export {addWishListVal,removeFromWishListVal}

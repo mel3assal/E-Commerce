@@ -9,6 +9,6 @@ brandRouter.post('/',protectedRoutes,allowedTo('admin','user'),uploadSingleFile(
 get('/',brandController.getAllBrands).
 get('/:id',validate(getBrandVal),brandController.getBrand).
 put('/:id',protectedRoutes,allowedTo('admin','user'),uploadSingleFile('logo','brands'),validate(updateBrandVal),brandController.updateBrand).
-delete('/:id',validate(deleteBrandVal),brandController.deleteBrand)
+delete('/:id',protectedRoutes,allowedTo('admin','user'),validate(deleteBrandVal),brandController.deleteBrand)
 
 export default  brandRouter

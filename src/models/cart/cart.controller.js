@@ -3,7 +3,6 @@ import { Coupon } from "../../../database/models/coupon.model.js";
 import { Product } from "../../../database/models/product.model.js";
 import { catchError } from "../../middlewares/catchError.js";
 import { AppError } from "../../utilis/AppError.js";
-import { APIFeatures } from "./../../utilis/apiFeatures.js";
 function calcTotalPrice(isExist) {
   isExist.totalPrice = isExist.cartItems.reduce(
     (prev, item) => (prev += item.quantity * item.price),
@@ -62,7 +61,7 @@ const removeItemFromCart = catchError(async (req, res, next) => {
     { $pull: { cartItems: { _id: req.params.id } } },
     { new: true }
   );
-  !cart || next(new AppError(`cart not found`, 404));
+  !cart ||next(new AppError(`cart not found`, 404));
   calcTotalPrice(cart);
   await cart.save();
   res.json({ message: "success", cart });

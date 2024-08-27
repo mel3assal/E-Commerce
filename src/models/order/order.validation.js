@@ -1,8 +1,9 @@
 import joi from 'joi'
 const createCashOrderVal=joi.object({
-    code:joi.string().required(),
-    discount:joi.number().required(),
-    expires:joi.date().required()
+        id:joi.string().hex().length(24),
+        shippingAddress:joi.object({
+            city: joi.string(), street: joi.string(), phone: joi.string()
+        })  
 })
 
 export {createCashOrderVal}
